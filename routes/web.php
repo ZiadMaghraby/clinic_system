@@ -5,10 +5,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaticPagesController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use App\Mail\AppointmentBookedMail;
-use App\Models\Appointment;
 
 // ==================================
 // Public / Welcome Route
@@ -124,33 +120,5 @@ Route::group([], function () {
     Route::get('/privacy', [StaticPagesController::class, 'privacy'])->name('privacy');
     Route::get('/terms', [StaticPagesController::class, 'terms'])->name('terms');
     Route::get('/contact', [StaticPagesController::class, 'contact'])->name('contact');
-});
-
-// ==================================
-// Test email route
-// ==================================
-Route::get('/test-mail', function () {
-    try {
-        config(['mail.mailers.smtp.verify_peer' => false]);
-        config(['mail.mailers.smtp.verify_peer_name' => false]);
-        
-        $timestamp = now()->format('Y-m-d H:i:s');
-        Mail::raw("Test email from clinic system at {$timestamp}", function($message) use ($timestamp) {
-            $message->to('ziadelmaghraby0@gmail.com')
-                    ->subject("Test Email {$timestamp}")
-                    ->priority(1);
-        });
-        
-        return response()->json([
-            'success' => true,
-            'time' => $timestamp,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'config' => config('mail')
-        ], 500);
-    }
 });
 
