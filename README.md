@@ -5,6 +5,14 @@ A bilingual general-clinic application built with Laravel 12, PHP, Blade and a l
 
 This release replaces the original separate dashboards with a shared workspace governed by role and record ownership. It is ready for **staging evaluation**. A real launch still requires hosting, SMTP, operational policies and the checks in [Deployment](docs/DEPLOYMENT.md).
 
+## Workspace preview
+
+Screenshots use fictional local demo data.
+
+![English clinic dashboard](docs/images/dashboard-en.png)
+
+![Arabic clinic dashboard with RTL navigation](docs/images/dashboard-ar.png)
+
 ## What works
 
 - Patient registration, verified-email access, password reset and account settings.
