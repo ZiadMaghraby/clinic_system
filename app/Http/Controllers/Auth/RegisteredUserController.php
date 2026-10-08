@@ -9,9 +9,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class RegisteredUserController extends Controller
 {
@@ -42,7 +44,16 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (TransportExceptionInterface $e) {
+            Log::warning('Registration verification email delivery failed.');
+            Auth::login($user);
+
+            return redirect()->route('verification.notice')->withErrors([
+                'email' => __('Your account was created, but we could not send the verification email. Please try resending it shortly.'),
+            ]);
+        }
 
         Auth::login($user);
 
