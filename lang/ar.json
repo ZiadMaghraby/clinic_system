@@ -260,5 +260,7 @@
   "Appointment rescheduled. Please confirm the new time.": "تمت إعادة الجدولة. يرجى تأكيد الوقت الجديد.",
   "A future visit cannot be marked completed.": "لا يمكن اعتبار زيارة مستقبلية مكتملة.",
   "The patient already has a visit at this time.": "لدى المريض موعد آخر في هذا الوقت.",
-  "appointment.rescheduled": "إعادة جدولة موعد"
+  "appointment.rescheduled": "إعادة جدولة موعد",
+  "Your account was created, but we could not send the verification email. Please try resending it shortly.": "تم إنشاء حسابك، لكن تعذر إرسال رسالة التأكيد. حاول إعادة إرسالها بعد قليل.",
+  "Email delivery is temporarily unavailable. Please try again shortly.": "إرسال البريد غير متاح مؤقتًا. حاول مرة أخرى بعد قليل."
 }
