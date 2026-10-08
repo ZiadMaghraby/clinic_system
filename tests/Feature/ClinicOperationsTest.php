@@ -125,8 +125,8 @@ test('records cannot be deleted by closing a patient or staff account', function
 });
 
 test('all admin screens render and Arabic direction is applied', function () {
-    app(BookingService::class)->book($this->booking, $this->patient);
-    foreach (['/dashboard', '/appointments', '/appointments/create', '/patients', '/doctors', '/invoices', '/team', '/audit', '/profile', '/appointments/1', '/invoices/1'] as $url) {
+    $appointment = app(BookingService::class)->book($this->booking, $this->patient);
+    foreach (['/dashboard', '/appointments', '/appointments/create', '/patients', '/doctors', '/invoices', '/team', '/audit', '/profile', route('appointments.show', $appointment), route('invoices.show', $appointment->invoice)] as $url) {
         $this->actingAs($this->admin)->get($url)->assertOk();
         $this->withSession(['locale' => 'ar'])->get($url)->assertOk()->assertSee('dir="rtl"', false);
     }
