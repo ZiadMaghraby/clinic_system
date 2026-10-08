@@ -1,29 +1,5 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
+@extends('clinic.layout')
+@section('title', __('Account settings'))
+@section('content')
+<div class="page-heading"><div><p class="eyebrow">{{ __('YOUR ACCOUNT') }}</p><h1>{{ __('Account settings') }}</h1><p>{{ __('Keep your details up to date.') }}</p></div></div><div class="two-col"><section class="panel padded"><h2>{{ __('Profile details') }}</h2><form method="post" action="{{ route('profile.update') }}" class="form-stack">@csrf @method('PATCH')<x-clinic-field name="name" label="Full name" :value="$user->name" required/><x-clinic-field name="email" label="Email" type="email" :value="$user->email" required/><x-clinic-field name="phone" label="Phone" type="tel" :value="$user->phone"/><p class="muted">{{ __('Changing your email requires verification again.') }}</p><button class="button">{{ __('Save changes') }}</button></form></section><section class="panel padded"><h2>{{ __('Change password') }}</h2>@if($errors->updatePassword->any())<div class="notice error">@foreach($errors->updatePassword->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif<form method="post" action="{{ route('password.update') }}" class="form-stack">@csrf @method('PUT')<x-clinic-field name="current_password" label="Current password" type="password" required autocomplete="current-password"/><x-clinic-field name="password" label="New password" type="password" minlength="12" required autocomplete="new-password"/><x-clinic-field name="password_confirmation" label="Confirm password" type="password" required autocomplete="new-password"/><button class="button secondary">{{ __('Update password') }}</button></form></section></div><section class="panel padded section-gap"><h2>{{ __('Account closure') }}</h2><p>{{ __('Accounts with clinic records must be reviewed by the clinic before removal. Contact your administrator for data requests.') }}</p>@if(!$user->isStaff() && !$user->appointmentsAsPatient()->exists())<form class="filters" method="post" action="{{ route('profile.destroy') }}" data-confirm="{{ __('Permanently close your empty account?') }}">@csrf @method('DELETE')<x-clinic-field name="password" label="Password" type="password" required/><button class="button danger">{{ __('Close account') }}</button></form>@endif @foreach($errors->userDeletion->all() as $error)<p role="alert">{{ $error }}</p>@endforeach</section>
+@endsection

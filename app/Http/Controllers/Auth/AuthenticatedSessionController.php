@@ -28,16 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-
-if (auth()->user()->isAdmin()) {
-    print("loggedin as admin");
-        return redirect()->intended(route('adminDashboard', absolute: false));
-}
-        print("loggedin as regual user");
-
         return redirect()->intended(route('dashboard', absolute: false));
-
-//return redirect()->route('dashboard');
 
     }
 

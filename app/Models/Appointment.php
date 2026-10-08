@@ -15,7 +15,18 @@ class Appointment extends Model
         'appointment_date',
         'appointment_time',
         'status',
+        'slot_key', 'reason', 'created_by', 'duration_minutes',
     ];
+
+    protected function casts(): array
+    {
+        return ['appointment_date' => 'date', 'reason' => 'encrypted'];
+    }
+
+    public function clinicalNote()
+    {
+        return $this->hasOne(ClinicalNote::class);
+    }
 
     public function patient()
     {
@@ -27,10 +38,8 @@ class Appointment extends Model
         return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 
-public function invoice()
-{
-    return $this->hasOne(Invoice::class, 'appointment_id', 'id');
-}
-
-
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class, 'appointment_id', 'id');
+    }
 }
