@@ -1,0 +1,6 @@
+@extends('clinic.layout')
+@section('title', __('Appointments'))
+@section('content')
+<div class="page-heading"><div><p class="eyebrow">{{ __('SCHEDULE & COORDINATE') }}</p><h1>{{ __('Appointments') }}</h1><p>{{ __('Every visit, clearly organised.') }}</p></div>@if(auth()->user()->role !== 'doctor')<a class="button" href="{{ route('appointments.create') }}">+ {{ __('New appointment') }}</a>@endif</div>
+<section class="panel"><form class="filters" method="get"><x-clinic-field name="q" label="Patient name" :value="request('q')" placeholder="{{ __('Search patients') }}"/><x-clinic-field name="date" label="Date" type="date" :value="request('date')"/><label class="field"><span>{{ __('Status') }}</span><select name="status"><option value="">{{ __('All statuses') }}</option>@foreach(['pending','confirmed','completed','cancelled'] as $s)<option value="{{ $s }}" @selected(request('status')===$s)>{{ __(ucfirst($s)) }}</option>@endforeach</select></label><button class="button secondary">{{ __('Filter') }}</button><a href="{{ route('appointments.index') }}">{{ __('Reset') }}</a></form>@include('clinic.partials.appointment-table')<div class="pagination">{{ $appointments->links('clinic.partials.pagination') }}</div></section>
+@endsection

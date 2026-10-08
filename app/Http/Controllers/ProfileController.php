@@ -48,6 +48,10 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->isStaff() || $user->appointmentsAsPatient()->exists()) {
+            return back()->withErrors(['account' => __('This account has clinic records. Contact the administrator for data requests.')], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();

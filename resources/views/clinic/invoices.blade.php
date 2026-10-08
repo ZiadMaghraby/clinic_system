@@ -1,0 +1,5 @@
+@extends('clinic.layout')
+@section('title', __('Billing'))
+@section('content')
+<div class="page-heading"><div><p class="eyebrow">{{ __('CLEAR & ACCOUNTED FOR') }}</p><h1>{{ __('Billing') }}</h1><p>{{ __('Consultation invoices and recorded payments.') }}</p></div></div><section class="panel"><div class="table-wrap"><table><thead><tr><th>{{ __('Invoice') }}</th><th>{{ __('Patient') }}</th><th>{{ __('Amount') }}</th><th>{{ __('Status') }}</th><th>{{ __('Details') }}</th></tr></thead><tbody>@forelse($invoices as $invoice)<tr><td>#{{ str_pad($invoice->id,5,'0',STR_PAD_LEFT) }}</td><td>{{ $invoice->appointment->patient->name }}<small>{{ $invoice->appointment->doctor->name }}</small></td><td>{{ $invoice->amount }} {{ config('clinic.currency') }}</td><td><span class="badge {{ $invoice->status }}">{{ __(ucfirst($invoice->status)) }}</span></td><td><a href="{{ route('invoices.show',$invoice) }}">{{ __('View invoice') }} ↗</a></td></tr>@empty<tr><td colspan="5" class="empty">{{ __('No invoices yet.') }}</td></tr>@endforelse</tbody></table></div><div class="pagination">{{ $invoices->links('clinic.partials.pagination') }}</div></section>
+@endsection

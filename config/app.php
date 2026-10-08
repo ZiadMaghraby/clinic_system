@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('CLINIC_TIMEZONE', 'Africa/Cairo'),
 
     /*
     |--------------------------------------------------------------------------

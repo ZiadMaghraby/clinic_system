@@ -22,8 +22,6 @@ return new class extends Migration
             $table->timestamps();
 
         });
-         $seeder = new \Database\Seeders\UserSeeder();
-         $seeder->run();
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

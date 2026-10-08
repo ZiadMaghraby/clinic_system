@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $attributes = ['role' => 'patient', 'is_active' => true];
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'date_of_birth',
     ];
 
     /**
@@ -43,6 +49,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'date_of_birth' => 'date',
         ];
     }
 
@@ -53,26 +61,36 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        return $this->is_admin;
+        return $this->role === 'admin';
     }
 
     /**
      * Get appointments where user is the doctor
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function appointmentsAsDoctor()
     {
-        return $this->hasMany(\App\Models\Appointment::class, 'doctor_id');
+        return $this->hasManyThrough(Appointment::class, Doctor::class, 'user_id', 'doctor_id');
     }
 
     /**
      * Get appointments where user is the patient
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function appointmentsAsPatient()
     {
-        return $this->hasMany(\App\Models\Appointment::class, 'patient_id');
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    public function doctor()
+    {
+        return $this->hasOne(Doctor::class);
+    }
+
+    public function isStaff(): bool
+    {
+        return in_array($this->role, ['admin', 'doctor', 'receptionist']);
     }
 }
