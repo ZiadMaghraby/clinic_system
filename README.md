@@ -7,11 +7,15 @@ This release replaces the original separate dashboards with a shared workspace g
 
 ## Workspace preview
 
-Screenshots use fictional local demo data.
+Captured from a local run of this application using fictional demo appointments.
 
 ![English clinic dashboard](docs/images/dashboard-en.png)
 
 ![Arabic clinic dashboard with RTL navigation](docs/images/dashboard-ar.png)
+
+### Billing workspace
+
+![Billing workspace with fictional consultation invoices](docs/images/billing.png)
 
 ## What works
 
