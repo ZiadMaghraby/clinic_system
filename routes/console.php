@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Services\LaunchReadiness;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -22,24 +23,17 @@ Artisan::command('clinic:admin {email} {--name=Clinic Administrator}', function 
     return 0;
 })->purpose('Create an administrator without default credentials');
 
-Artisan::command('clinic:preflight', function () {
-    $checks = [
-        'Production environment' => app()->isProduction(),
-        'Debug disabled' => ! config('app.debug'),
-        'HTTPS application URL' => str_starts_with(config('app.url'), 'https://'),
-        'Secure session cookies' => (bool) config('session.secure'),
-        'Encrypted sessions' => (bool) config('session.encrypt'),
-        'Email delivery configured' => ! in_array(config('mail.default'), ['log', 'array']),
-        'Application key present' => filled(config('app.key')),
-        'Clinic phone configured' => filled(config('clinic.phone')),
-        'Clinic address configured' => filled(config('clinic.address')),
-        'Administrator exists' => User::where('role', 'admin')->where('is_active', true)->exists(),
-        'No demo accounts' => ! User::where('email', 'like', '%@clinic.example')->exists(),
-    ];
-    foreach ($checks as $label => $passed) {
-        $this->line(($passed ? 'PASS ' : 'FAIL ').$label);
+Artisan::command('clinic:preflight {--json : Emit machine-readable check results}', function () {
+    $checks = app(LaunchReadiness::class)->checks();
+    $passed = ! in_array(false, $checks, true);
+    if ($this->option('json')) {
+        $this->line(json_encode(['ready' => $passed, 'checks' => $checks], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    } else {
+        foreach ($checks as $label => $result) {
+            $this->line(($result ? 'PASS ' : 'FAIL ').$label);
+        }
+        $this->comment('Configuration checks do not prove email delivery, backup restoration or operational readiness. Verify these before real patient use.');
     }
-    $this->comment('Also verify backups, restore, SMTP delivery, access reviews, monitoring, and local healthcare requirements before real patient use.');
 
-    return in_array(false, $checks, true) ? 1 : 0;
+    return $passed ? 0 : 1;
 })->purpose('Check launch configuration without changing data');
