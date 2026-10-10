@@ -28,8 +28,8 @@ This release is a **staging candidate**, not a certification for medical use. So
 
    `clinic:admin` prompts for a password without echoing it. There is no production default admin account. Never run `DemoSeeder` on a deployed system.
 4. Give only the web-service user write access to `storage/` and `bootstrap/cache/`. Keep source and `.env` unreadable to other users. Route requests through `public/index.php` using the supplied Nginx starting configuration. Enable HTTPS at the reverse proxy/server and restrict trusted proxy configuration to your own infrastructure.
-5. Verify `/up`, registration, email verification, password reset, login/logout, all four roles, booking/cancellation, rescheduling, notes, invoice printing and payment recording in **staging**. SMTP verification/reset delivery is synchronous: test provider failures too.
-6. Configure an uptime monitor for `/up`, central error monitoring with patient data redaction, log retention and encrypted backups. `/up` checks application boot only; use separate database and SMTP monitoring.
+5. Verify `/up`, `/ready`, registration, email verification, password reset, login/logout, all four roles, booking/cancellation, rescheduling, notes, invoice printing and payment recording in **staging**. SMTP verification/reset delivery is synchronous: test provider failures too.
+6. Configure an uptime monitor for `/up`, central error monitoring with patient data redaction, log retention and encrypted backups. `/up` checks application boot only. `/ready` executes a database probe without creating a session, returning generic JSON and HTTP 200/503 without connection details. It does not certify schema, email delivery or overall launch readiness. Use `php artisan clinic:preflight --json` for configuration and migration gates; exit code 1 blocks deployment. Monitor actual SMTP delivery separately.
 
 ## Upgrading the old project
 
@@ -61,3 +61,9 @@ This release is a **staging candidate**, not a certification for medical use. So
 - [Laravel deployment](https://laravel.com/docs/12.x/deployment)
 - [Laravel email verification](https://laravel.com/docs/12.x/verification)
 
+
+## Doctor absence release (2026-10-10)
+
+Run the normal additive migrations before serving the new code. The new doctor_time_offs table keeps cancelled absence records for audit. In Doctor time off, administrators can block a future period using the clinic timezone. Overlapping appointments must be rescheduled or cancelled first. Booking and rescheduling use the same doctor lock as absence creation. Existing bookings and invoices are never automatically rewritten.
+
+Preflight now rejects unapplied migrations, unverified administrators, unsafe cookie settings, placeholder mail senders, timezone mismatches, development Vite servers and mail configurations that fall back to logging. It reports database failures without credentials. Passing configuration checks still requires a real mail delivery test and backup restore drill.

@@ -23,6 +23,7 @@ Captured from a local run of this application using fictional demo appointments.
 - Administrator, doctor, receptionist and patient roles.
 - Appointment availability based on each doctor's working days, hours and visit length.
 - Booking, confirmation, completion, cancellation and staff rescheduling.
+- Audited doctor holidays and breaks, with overlap protection for booking and rescheduling.
 - Database-enforced slot uniqueness plus transactional locks and duration-overlap checks.
 - Patient contact directory, staff-created accounts, patient profiles and paginated visit/billing history.
 - Audited patient contact corrections without changing portal credentials or permissions.
@@ -89,7 +90,7 @@ GitHub Actions runs tests on PHP 8.2/8.3 and SQLite/MySQL 8. Booking tests cover
 
 ## Latest continuation
 
-The patient-profile and reporting release adds 12 regression cases; the local suite passes 73 tests with 300 assertions. Reports distinguish payment-date collections from appointment-date balances. Arabic RTL and a 390px patient profile were checked in the browser. See [release verification](docs/RELEASE-VERIFICATION.md) for the exact scope and outstanding launch gates.
+The suite now passes 92 tests with 382 assertions. Doctor absences cannot silently displace existing reservations. Reports distinguish payment-date collections from appointment-date balances. Arabic RTL and a 390px absence-management screen were checked in the browser. Production preflight supports JSON output, and /ready provides a stateless database probe. See [release verification](docs/RELEASE-VERIFICATION.md) for the exact scope and outstanding launch gates.
 
 ## Before launch
 
