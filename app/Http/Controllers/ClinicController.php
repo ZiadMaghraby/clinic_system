@@ -33,8 +33,11 @@ class ClinicController extends Controller
     public function dashboard()
     {
         $query = $this->appointmentsFor(auth()->user());
-        $today = now(config('clinic.timezone'))->toDateString();
-        $upcoming = (clone $query)->with(['doctor', 'patient'])->whereDate('appointment_date', '>=', $today)
+        $clock = now(config('clinic.timezone'));
+        $today = $clock->toDateString();
+        $upcoming = (clone $query)->with(['doctor', 'patient'])->where(function ($q) use ($today, $clock) {
+            $q->whereDate('appointment_date', '>', $today)->orWhere(fn ($q) => $q->whereDate('appointment_date', $today)->where('appointment_time', '>=', $clock->format('H:i:s')));
+        })
             ->whereIn('status', ['pending', 'confirmed'])->orderBy('appointment_date')->orderBy('appointment_time')->limit(6)->get();
         $stats = [
             'Today' => (clone $query)->whereDate('appointment_date', $today)->where('status', '!=', 'cancelled')->count(),

@@ -24,7 +24,9 @@ Captured from a local run of this application using fictional demo appointments.
 - Appointment availability based on each doctor's working days, hours and visit length.
 - Booking, confirmation, completion, cancellation and staff rescheduling.
 - Database-enforced slot uniqueness plus transactional locks and duration-overlap checks.
-- Patient contact directory and staff-created patient accounts.
+- Patient contact directory, staff-created accounts, patient profiles and paginated visit/billing history.
+- Audited patient contact corrections without changing portal credentials or permissions.
+- Administrator reports with inclusive date filters, payment-method totals and safe aggregate CSV exports.
 - Doctor fees and schedules; existing invoices preserve their original fee.
 - Encrypted clinical notes restricted to the assigned clinician and administrators.
 - One invoice per appointment; payment recording, duplicate-payment protection and printable invoices.
@@ -84,6 +86,10 @@ GitHub Actions runs tests on PHP 8.2/8.3 and SQLite/MySQL 8. Booking tests cover
 - `resources/css/app.css`: responsive design, RTL and print styling.
 - `lang/ar.json`, `lang/ar`: Arabic interface, validation and authentication messages.
 - `tests/Feature/ClinicOperationsTest.php`: business-flow and access-control tests.
+
+## Latest continuation
+
+The patient-profile and reporting release adds 12 regression cases; the local suite passes 73 tests with 300 assertions. Reports distinguish payment-date collections from appointment-date balances. Arabic RTL and a 390px patient profile were checked in the browser. See [release verification](docs/RELEASE-VERIFICATION.md) for the exact scope and outstanding launch gates.
 
 ## Before launch
 

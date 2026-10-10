@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,10 @@ Route::middleware(['auth', 'verified', 'role:admin,doctor,receptionist,patient']
     Route::put('/doctors/{doctor}', [ClinicController::class, 'saveDoctor'])->middleware('role:admin')->name('doctors.update');
     Route::get('/patients', [ClinicController::class, 'patients'])->middleware('role:admin,receptionist')->name('patients.index');
     Route::post('/patients', [ClinicController::class, 'storePatient'])->middleware('role:admin,receptionist')->name('patients.store');
+    Route::get('/patients/{patient}', [PatientController::class, 'show'])->middleware('role:admin,receptionist')->name('patients.show');
+    Route::patch('/patients/{patient}', [PatientController::class, 'update'])->middleware('role:admin,receptionist')->name('patients.update');
+    Route::get('/reports', [ReportsController::class, 'index'])->middleware('role:admin')->name('reports.index');
+    Route::get('/reports/export', [ReportsController::class, 'export'])->middleware(['role:admin', 'throttle:10,1'])->name('reports.export');
     Route::get('/invoices', [ClinicController::class, 'invoices'])->middleware('role:admin,receptionist,patient')->name('invoices.index');
     Route::get('/invoices/{invoice}', [ClinicController::class, 'showInvoice'])->middleware('role:admin,receptionist,patient')->name('invoices.show');
     Route::patch('/invoices/{invoice}/payment', [ClinicController::class, 'payInvoice'])->middleware('role:admin,receptionist')->name('invoices.pay');
