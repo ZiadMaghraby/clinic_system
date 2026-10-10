@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\DoctorTimeOffController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
@@ -17,6 +18,9 @@ Route::post('/language', function (Request $request) {
 
 Route::middleware(['auth', 'verified', 'role:admin,doctor,receptionist,patient'])->group(function () {
     Route::get('/dashboard', [ClinicController::class, 'dashboard'])->name('dashboard');
+    Route::get('/time-off', [DoctorTimeOffController::class, 'index'])->middleware('role:admin')->name('time-off.index');
+    Route::post('/time-off', [DoctorTimeOffController::class, 'store'])->middleware('role:admin')->name('time-off.store');
+    Route::patch('/time-off/{period}/cancel', [DoctorTimeOffController::class, 'cancel'])->middleware('role:admin')->name('time-off.cancel');
     Route::get('/appointments', [ClinicController::class, 'appointments'])->name('appointments.index');
     Route::get('/appointments/create', [ClinicController::class, 'createAppointment'])->middleware('role:admin,receptionist,patient')->name('appointments.create');
     Route::post('/appointments', [ClinicController::class, 'storeAppointment'])->middleware(['role:admin,receptionist,patient', 'throttle:30,1'])->name('appointments.store');

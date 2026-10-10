@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\AuditLog;
 use App\Models\Doctor;
+use App\Models\DoctorTimeOff;
 use App\Models\Invoice;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -22,6 +23,8 @@ class BookingService
         }
         $cursor = $day->setTimeFromTimeString($doctor->starts_at);
         $end = $day->setTimeFromTimeString($doctor->ends_at);
+        $timeOff = DoctorTimeOff::where('doctor_id', $doctor->id)->whereNull('cancelled_at')
+            ->where('starts_at', '<', $day->addDay())->where('ends_at', '>', $day)->get();
         $occupied = $doctor->appointments()->whereDate('appointment_date', $date)
             ->where('status', '!=', 'cancelled')->when($except, fn ($q) => $q->where('id', '!=', $except))->get(['appointment_time', 'duration_minutes']);
         $slots = [];
@@ -31,7 +34,9 @@ class BookingService
 
                 return $cursor->lt($start->addMinutes($a->duration_minutes)) && $cursor->addMinutes($doctor->slot_minutes)->gt($start);
             });
-            if ($cursor->isFuture() && ! $overlaps) {
+            $unavailable = $timeOff->contains(fn ($period) => $cursor->lt(CarbonImmutable::parse($period->getRawOriginal('ends_at'), config('clinic.timezone')))
+                && $cursor->addMinutes($doctor->slot_minutes)->gt(CarbonImmutable::parse($period->getRawOriginal('starts_at'), config('clinic.timezone'))));
+            if ($cursor->isFuture() && ! $overlaps && ! $unavailable) {
                 $slots[] = $cursor->format('H:i');
             }
             $cursor = $cursor->addMinutes($doctor->slot_minutes);

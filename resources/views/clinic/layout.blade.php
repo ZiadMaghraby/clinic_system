@@ -5,10 +5,10 @@
 <a class="skip" href="#main">{{ __('Skip to content') }}</a>
 @auth
 <aside class="sidebar"><a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark">+</span><span>{{ config('clinic.name') }}<small>{{ __('CARE, CONNECTED') }}</small></span></a><p class="nav-label">{{ __('WORKSPACE') }}</p><nav aria-label="{{ __('Main navigation') }}">
-@foreach(['dashboard'=>['Overview','◫'], 'appointments.index'=>['Appointments','▦'], 'patients.index'=>['Patients','◎'], 'doctors.index'=>['Care team','✚'], 'invoices.index'=>['Billing','▤'], 'reports.index'=>['Reports','▥'], 'team.index'=>['Staff access','◇'], 'audit.index'=>['Activity log','↻']] as $route => [$label,$icon])
+@foreach(['dashboard'=>['Overview','◫'], 'appointments.index'=>['Appointments','▦'], 'patients.index'=>['Patients','◎'], 'doctors.index'=>['Care team','✚'], 'invoices.index'=>['Billing','▤'], 'time-off.index'=>['Doctor time off','◷'], 'reports.index'=>['Reports','▥'], 'team.index'=>['Staff access','◇'], 'audit.index'=>['Activity log','↻']] as $route => [$label,$icon])
 @continue(in_array($route,['patients.index']) && !in_array(auth()->user()->role,['admin','receptionist']))
 @continue($route === 'invoices.index' && auth()->user()->role === 'doctor')
-@continue(in_array($route,['team.index','audit.index','reports.index']) && !auth()->user()->isAdmin())
+@continue(in_array($route,['team.index','audit.index','reports.index','time-off.index']) && !auth()->user()->isAdmin())
 <a class="nav-link {{ request()->routeIs($route) || ($route === 'patients.index' && request()->routeIs('patients.*')) ? 'active' : '' }}" href="{{ route($route) }}"><span aria-hidden="true">{{ $icon }}</span>{{ __($label) }}</a>
 @endforeach</nav><div class="sidebar-bottom"><span class="status-dot"></span>{{ __(ucfirst(auth()->user()->role)) }}<small>{{ __('Your workspace. Your focus.') }}</small></div></aside>
 @endauth
